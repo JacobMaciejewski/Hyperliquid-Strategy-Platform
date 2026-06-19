@@ -65,6 +65,12 @@ loop), then reports that the healthy plugin kept trading and the platform stayed
   ```bash
   uv run litecli platform.db        # interactive; then e.g.  SELECT * FROM orders;   (\q to quit)
   ```
+  Or print the full history as a table in one shot:
+  ```bash
+  uv run litecli -t platform.db -e "SELECT created_at, plugin_id, coin, side, sz, limit_px, state FROM orders ORDER BY created_at"
+  ```
+  Rows from earlier runs are still there: this is the proof that the platform's orders persist across a
+  restart. (Start clean with `--fresh`, which wipes the DB.)
 - **Wallet (live mode).** Two helpers read your key from `.env`:
   ```bash
   uv run python wallet_balance.py     # spot USDC, perp account value, open positions
