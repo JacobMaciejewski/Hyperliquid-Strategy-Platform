@@ -299,6 +299,11 @@ platform placed. Two things are deliberately *not* restored:
 - **Positions live on the exchange,** not in our database, so they survive a restart on their own, and
   even survive deleting the database. `--fresh` deletes the database for a clean start.
 
+P&L is restored from the stored fills, but it is `position × current mark`, and the mark comes from
+live data that is not persisted. So just after a restart P&L reads null until the first price tick
+provides a mark (sub-second), and the position is then re-marked at the current price, not the price
+when you stopped.
+
 **The honest gap.** We rebuild our own record of open orders, but in live mode we do not yet
 *reconcile* against the exchange. If an order filled or was cancelled while the platform was down, the
 new run will not notice, and a resting order from the previous run will not be auto-cancelled, because

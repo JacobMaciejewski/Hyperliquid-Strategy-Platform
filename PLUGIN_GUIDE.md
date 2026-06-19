@@ -154,6 +154,9 @@ When the platform stops and starts again, here is what your plugin should expect
   new data. The platform persists its own orders, not your strategy's internals.
 - **Positions live on the exchange**, not in the DB, so they survive a restart and even deleting the
   DB. The README has a helper to flatten them.
+- **P&L needs a live price.** It is `position × current mark`, and the mark is not persisted. So right
+  after a restart P&L reads null until the first price tick arrives (sub-second), then re-marks the
+  position at the current price (not the price when you stopped), so the number can differ slightly.
 - One honest gap: a resting order from a previous run is recorded in the DB, but the live executor's
   in-memory tracking is not rebuilt yet, so a fresh run will not cancel that specific order for you.
   Exchange reconciliation is future work (see the design document, section 7).

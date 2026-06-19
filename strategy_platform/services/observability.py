@@ -47,15 +47,18 @@ class StatusServer:
 
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):
-                if self.path.rstrip("/") in ("", "/status"):
-                    body = json.dumps(snapshot(), indent=2, default=str).encode()
+                if self.path.rstrip("/") not in ("", "/status"):
+                    self.send_error(404)
+                    return
+                body = json.dumps(snapshot(), indent=2, default=str).encode()
+                try:
                     self.send_response(200)
                     self.send_header("Content-Type", "application/json")
                     self.send_header("Content-Length", str(len(body)))
                     self.end_headers()
                     self.wfile.write(body)
-                else:
-                    self.send_error(404)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass  # client closed early (browser refresh/navigation); harmless
 
             def log_message(self, *args):  # keep the server quiet
                 pass
