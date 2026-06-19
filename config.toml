@@ -1,0 +1,38 @@
+# Example platform config: two plugins against live testnet market data.
+# Run with:  uv run python -m strategy_platform              (uses this file, config.toml, by default)
+#       or:  uv run python -m strategy_platform other.toml   (a different config path)
+
+[execution]
+mode = "mock"        # "mock" = simulated fills, no key/funds needed (default);  "live" = real testnet orders (needs .env)
+
+[market_data]
+mode = "live"        # live testnet market data over one shared websocket
+
+[observability]
+port = 8080           # JSON status endpoint at http://127.0.0.1:8080/status (0 disables)
+
+[limits]             # GLOBAL — totals across every plugin
+max_orders_per_sec = 5
+max_open_orders    = 20
+max_gross_notional = 50000
+
+[[plugins]]
+name   = "mean_rev_btc"
+module = "plugins.mean_reversion"
+[plugins.config]
+coin         = "BTC"
+window_secs  = 20
+k_stddev     = 2.0
+order_size   = 0.001
+flatten_secs = 15
+flatten_ticks = 8
+
+[[plugins]]
+name   = "market_maker_eth"
+module = "plugins.market_maker"
+[plugins.config]
+coin          = "ETH"
+spread_bps    = 10
+order_size    = 0.01
+inventory_cap = 0.05
+requote_bps   = 8     # >= half-spread (5bps) so quotes rest long enough to actually get filled

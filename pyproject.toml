@@ -1,0 +1,24 @@
+[project]
+name = "strategy-platform"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "hyperliquid-python-sdk>=0.24.0",
+    "python-dotenv>=1.2.2",
+]
+
+[dependency-groups]
+dev = [
+    "litecli>=1.17.1",
+    "pytest>=9.1.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "integration: hits the live testnet (network, slow). Run with: uv run pytest -m integration",
+]
+addopts = "-m 'not integration'"

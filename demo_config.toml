@@ -1,0 +1,44 @@
+# Config for the failure-scenario demo (failure_demo.py).
+# A healthy market-maker plus two deliberately broken plugins, to show isolation:
+#   crasher — raises an uncaught exception on every tick
+#   looper  — spins forever (infinite loop) on its first tick
+# Run with:  uv run python failure_demo.py
+
+[execution]
+mode = "mock"        # simulated fills against live testnet data — no key/funds needed
+
+[market_data]
+mode = "live"
+
+[observability]
+port = 8080          # the demo serves /status here while running
+
+[limits]             # generous, so the demo is about isolation, not limits
+max_orders_per_sec = 10
+max_open_orders    = 50
+max_gross_notional = 1000000000
+
+[[plugins]]
+name   = "healthy_mm"
+module = "plugins.market_maker"
+class  = "MarketMaker"
+[plugins.config]
+coin          = "ETH"
+spread_bps    = 2     # tight quotes (~1bp off mid) so almost any tick fills -> it develops a position
+requote_bps   = 8
+order_size    = 0.01
+inventory_cap = 0.05
+
+[[plugins]]
+name   = "crasher"
+module = "plugins.crasher"
+class  = "Crasher"
+[plugins.config]
+coin = "ETH"
+
+[[plugins]]
+name   = "looper"
+module = "plugins.looper"
+class  = "Looper"
+[plugins.config]
+coin = "ETH"
