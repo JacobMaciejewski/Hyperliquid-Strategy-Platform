@@ -78,6 +78,8 @@ def _report(platform: Platform, run_secs: int) -> None:
           f"position/P&L {healthy_portfolio}")
     print(f"  crasher     alive={by_name['crasher']['alive']}  {crashes} crash(es) caught and ignored")
     print(f"  looper      alive={by_name['looper']['alive']}  stuck in an infinite loop, placed nothing")
+    print("  (the crasher raises once per market tick, and testnet bbo is sparse, so the crash count is")
+    print("   low, but every tick it did get was caught, and the platform never went down.)")
 
     print("\nWhy the broken plugins don't take the platform down:")
     print("  each plugin runs on its own thread — an uncaught exception is caught per callback, and a")
